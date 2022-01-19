@@ -6,6 +6,7 @@ locals {
   vpc_id = "vpc-xxxxx"
   subnets_cidrs = ["x.x.x.x/x","x.x.x.x/x"]
   private_route_table_id = "rtb-xxxxx"
+  eks_cluster_name = "rtb-xxxxx"
 }
 
 # Resources:
@@ -76,6 +77,7 @@ POLICY
 
   managed_policy_arns = [
     aws_iam_policy.amazon_mwaa_policy.arn,
+    aws_iam_policy.amazon_mwaa_eks_scheduling_policy.arn,
   ]
   max_session_duration = "3600"
   name                 = "airflow-mwaa-role"
@@ -178,6 +180,27 @@ resource "aws_iam_policy" "amazon_mwaa_policy" {
     ]
 }
 POLICY
+resource "aws_iam_policy" "amazon_mwaa_eks_scheduling_policy" {
+  name   = "amazon_mwaa_eks_scheduling_policy"
+  path   = "/"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+               {
+            "Effect": "Allow",
+            "Action": [
+                "eks:DescribeCluster"
+            ],
+            "Resource": "arn:aws:eks:${local.region}:${local.account_id}:cluster/${local.eks_cluster_name}"
+        }     
+    ]
+}
+POLICY
+}
+
+# Creating the Env-
+# For fine tuning, you will find many more configuration options here https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/mwaa_environment
 resource "aws_mwaa_environment" "mwaa" {
   name                          = "my-mwaa-env"
   airflow_version               ="2.0.2" 
