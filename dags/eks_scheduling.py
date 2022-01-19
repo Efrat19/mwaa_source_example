@@ -27,7 +27,7 @@ dag = DAG(
    'kubernetes_pod_example', default_args=default_args, schedule_interval=None)
 
 #use a kube_config stored in s3 dags folder for now
-kube_config_path = '/usr/local/airflow/mwaa_source_example/kube_config'
+kube_config_path = '/usr/local/airflow/mwaa_source_example/dags/kube_config'
 
 podRun = KubernetesPodOperator(
                        namespace="default",
