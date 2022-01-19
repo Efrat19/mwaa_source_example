@@ -1,0 +1,2 @@
+kubernetes
+apache-airflow[cncf.kubernetes]==2.0.2
